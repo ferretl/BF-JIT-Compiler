@@ -24,7 +24,8 @@ typedef struct {
 	size_t program_length;
 } Program;
 
-Program compile_bf_program(const char *brainfuck_program, size_t brainfuck_program_length);
+Program compile_bf_program(const char *brainfuck_program, size_t brainfuck_program_length, char *output_prefix,
+						   bool dump_program);
 
 Program generate_initial_IR_program(const char *brainfuck_program, size_t brainfuck_program_length);
 

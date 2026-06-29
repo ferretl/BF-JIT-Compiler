@@ -1,10 +1,12 @@
 #include "compile.h"
-
 #include <stdio.h>
+#include <string.h>
 
-Program compile_bf_program(const char *brainfuck_program, const size_t brainfuck_program_length) {
+Program compile_bf_program(const char *brainfuck_program, const size_t brainfuck_program_length, char *output_prefix,
+						   const bool dump_program) {
 	Program initial_IR_program = generate_initial_IR_program(brainfuck_program, brainfuck_program_length);
-	dump_IR(initial_IR_program, "initial_program_dump.txt");
+	if (dump_program)
+		dump_IR(initial_IR_program, strcat(output_prefix, "_dump.txt"));
 	return (Program) {nullptr, 0};
 }
 
@@ -21,7 +23,6 @@ Program generate_initial_IR_program(const char *brainfuck_program, const size_t 
 	size_t program_length = 0;
 	for (size_t i = 0; i < brainfuck_program_length; i++) {
 		const char current_character = brainfuck_program[i];
-		printf("current char: %c\n", current_character);
 		switch (current_character) {
 			case '.':
 				initial_instructions[program_length].opcode = OP_PRINT;
@@ -68,8 +69,6 @@ Program generate_initial_IR_program(const char *brainfuck_program, const size_t 
 			default:
 				break;
 		}
-		printf("Instruction generated: %s\t", opcode_to_string(initial_instructions[program_length].opcode));
-		printf("Argument: %d\n", initial_instructions[program_length].argument);
 	}
 
 	initial_program.instructions = initial_instructions;

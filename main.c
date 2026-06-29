@@ -1,18 +1,42 @@
 #include <_stdlib.h>
+#include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include "compile.h"
 
+static char *get_input_file_prefix(const char *filename) {
+	const size_t filename_length = strlen(filename);
+	char *output = malloc(filename_length - 3); /* room for ".s" plus '\0' when appending */
+	if (output == NULL) {
+		return nullptr;
+	}
+	strcpy(output, filename);
+
+	const char *slash = strrchr(output, '/');
+	char *dot = strrchr(output, '.');
+	if (dot != NULL && (slash == NULL || dot > slash)) {
+		strcpy(dot, ""); /* replace the extension */
+	} else {
+		strcat(output, ""); /* no extension: append */
+	}
+	return output;
+}
 
 int main(const int argc, char *argv[]) {
-	if (argc < 2) {
-		fprintf(stderr, "No BF file was supplied!");
-		return EXIT_FAILURE;
+
+	bool dump_program = false;
+	const char *filename = nullptr;
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "-d") == 0) {
+			dump_program = true;
+		} else {
+			filename = argv[i];
+		}
 	}
 
-	char *filename = argv[1];
 	if (filename == NULL) {
 		fprintf(stderr, "Error: missing file path argument.\n");
-		fprintf(stderr, "Usage: %s [-i] <filename>\n", argv[0]);
+		fprintf(stderr, "Usage: %s <filename> [-d]\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
@@ -50,7 +74,9 @@ int main(const int argc, char *argv[]) {
 	brainfuck_program[brainfuck_program_length] = '\0';
 	fclose(input_file);
 
-	compile_bf_program(brainfuck_program, brainfuck_program_length);
+
+	char *filename_prefix = dump_program ? get_input_file_prefix(filename) : nullptr;
+	compile_bf_program(brainfuck_program, brainfuck_program_length, filename_prefix, dump_program);
 
 	free(brainfuck_program);
 	return EXIT_SUCCESS;
