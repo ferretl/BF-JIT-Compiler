@@ -13,5 +13,7 @@ include_directories(${LIGHTNING_INCLUDE_DIR})
 
 set(CMAKE_C_STANDARD 23)
 
-add_executable(BF_JIT main.c)
+add_executable(BF_JIT main.c
+        compile.h
+        compile.c)
 target_link_libraries(BF_JIT ${LIGHTNING_LIBRARY})

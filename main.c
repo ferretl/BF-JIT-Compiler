@@ -1,15 +1,15 @@
-#include <stdio.h>
 #include <_stdlib.h>
+#include <stdio.h>
+#include "compile.h"
 
 
-int main(const int argc, char *argv[])
-{
+int main(const int argc, char *argv[]) {
 	if (argc < 2) {
 		fprintf(stderr, "No BF file was supplied!");
 		return EXIT_FAILURE;
 	}
 
-	char* filename = argv[1];
+	char *filename = argv[1];
 	if (filename == NULL) {
 		fprintf(stderr, "Error: missing file path argument.\n");
 		fprintf(stderr, "Usage: %s [-i] <filename>\n", argv[0]);
@@ -34,7 +34,7 @@ int main(const int argc, char *argv[])
 	int character;
 	while ((character = fgetc(input_file)) != EOF) {
 		if (brainfuck_program_length + 1 >= brainfuck_program_cap) {
-			brainfuck_program_cap *=2;
+			brainfuck_program_cap *= 2;
 			char *grown = realloc(brainfuck_program, brainfuck_program_cap);
 			if (grown == NULL) {
 				fprintf(stderr, "Error: allocation failed.\n");
@@ -50,6 +50,7 @@ int main(const int argc, char *argv[])
 	brainfuck_program[brainfuck_program_length] = '\0';
 	fclose(input_file);
 
+	compile_bf_program(brainfuck_program, brainfuck_program_length);
 
 	free(brainfuck_program);
 	return EXIT_SUCCESS;
