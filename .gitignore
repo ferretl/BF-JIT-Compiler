@@ -1,4 +1,4 @@
 /build/BF_JIT
 *.bf
-./build
-./cmake-build-debug
+/cmake-build-debug
+/build
