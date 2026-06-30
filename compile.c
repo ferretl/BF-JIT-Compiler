@@ -10,16 +10,8 @@ Program compile_bf_program(const char *brainfuck_program, const size_t brainfuck
 	return (Program) {nullptr, 0};
 }
 
-Program generate_initial_IR_program(const char *brainfuck_program, const size_t brainfuck_program_length) {
-
-	Program initial_program = {nullptr, 0};
-
-	Instruction *initial_instructions = malloc(brainfuck_program_length * sizeof(Instruction));
-	if (initial_instructions == NULL) {
-		fprintf(stderr, "Error: Unable to initialise IR Array");
-		return initial_program;
-	}
-
+size_t generate_initial_instructions(const char *brainfuck_program, const size_t brainfuck_program_length,
+									 Instruction *initial_instructions) {
 	size_t program_length = 0;
 	for (size_t i = 0; i < brainfuck_program_length; i++) {
 		const char current_character = brainfuck_program[i];
@@ -70,6 +62,21 @@ Program generate_initial_IR_program(const char *brainfuck_program, const size_t 
 				break;
 		}
 	}
+	return program_length;
+}
+
+Program generate_initial_IR_program(const char *brainfuck_program, const size_t brainfuck_program_length) {
+
+	Program initial_program = {nullptr, 0};
+
+	Instruction *initial_instructions = malloc(brainfuck_program_length * sizeof(Instruction));
+	if (initial_instructions == NULL) {
+		fprintf(stderr, "Error: Unable to initialise IR Array");
+		return initial_program;
+	}
+
+	const size_t program_length =
+			generate_initial_instructions(brainfuck_program, brainfuck_program_length, initial_instructions);
 
 	initial_program.instructions = initial_instructions;
 	initial_program.program_length = program_length;

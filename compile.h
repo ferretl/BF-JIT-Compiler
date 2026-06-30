@@ -26,9 +26,13 @@ typedef struct {
 
 Program compile_bf_program(const char *brainfuck_program, size_t brainfuck_program_length, char *output_prefix,
 						   bool dump_program);
-
+size_t generate_initial_instructions(const char *brainfuck_program, const size_t brainfuck_program_length,
+									 Instruction *initial_instructions);
+Program convert_brainfuck_to_instructions(const char *brainfuck_program, size_t brainfuck_program_length);
 Program generate_initial_IR_program(const char *brainfuck_program, size_t brainfuck_program_length);
-
+Program generate_optimised_IR_program(Program program);
+Program coalesce_instructions(Program program);
+void resolve_program_jumps(Program program);
 char *opcode_to_string(Opcode opcode);
 void dump_IR(Program program, const char *filename);
 
