@@ -21,6 +21,8 @@ static char *get_input_file_prefix(const char *filename) {
 	return output;
 }
 
+static bool is_brainfuck_instruction(const int character) { return strchr("+-<>.,[]", character) != NULL; }
+
 int main(const int argc, char *argv[]) {
 
 	bool dump_program = false;
@@ -56,6 +58,9 @@ int main(const int argc, char *argv[]) {
 
 	int character;
 	while ((character = fgetc(input_file)) != EOF) {
+		if (!is_brainfuck_instruction(character)) {
+			continue;
+		}
 		if (brainfuck_program_length + 1 >= brainfuck_program_cap) {
 			brainfuck_program_cap *= 2;
 			char *grown = realloc(brainfuck_program, brainfuck_program_cap);
