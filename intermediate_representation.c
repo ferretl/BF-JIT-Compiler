@@ -1,16 +1,16 @@
-#include "compile.h"
+#include "intermediate_representation.h"
 #include <stdio.h>
 #include <string.h>
 
-Program compile_bf_program(const char *brainfuck_program, const size_t brainfuck_program_length, char *output_prefix,
-						   const bool dump_program) {
+IR_Program transform_brainfuck_to_ir(const char *brainfuck_program, const size_t brainfuck_program_length,
+									 char *output_prefix, const bool dump_program) {
 
-	Program initial_IR_program = generate_initial_IR_program(brainfuck_program, brainfuck_program_length);
+	IR_Program initial_IR_program = generate_initial_IR_program(brainfuck_program, brainfuck_program_length);
 	if (initial_IR_program.instructions == nullptr && brainfuck_program_length > 0) {
 		return initial_IR_program;
 	}
 
-	Program optimised_ir_program = generate_optimised_IR_program(initial_IR_program);
+	IR_Program optimised_ir_program = generate_optimised_IR_program(initial_IR_program);
 	if (optimised_ir_program.instructions == nullptr) {
 		free(initial_IR_program.instructions);
 		return optimised_ir_program;
@@ -23,7 +23,7 @@ Program compile_bf_program(const char *brainfuck_program, const size_t brainfuck
 			fprintf(stderr, "Error: Unable to allocate dump filename\n");
 			free(initial_IR_program.instructions);
 			free(optimised_ir_program.instructions);
-			return (Program) {nullptr, 0};
+			return (IR_Program) {nullptr, 0};
 		}
 
 		snprintf(dump_filename, dump_filename_length, "%s_dump.txt", output_prefix);
@@ -92,9 +92,9 @@ size_t generate_initial_instructions(const char *brainfuck_program, const size_t
 	return program_length;
 }
 
-Program generate_initial_IR_program(const char *brainfuck_program, const size_t brainfuck_program_length) {
+IR_Program generate_initial_IR_program(const char *brainfuck_program, const size_t brainfuck_program_length) {
 
-	Program initial_program = {nullptr, 0};
+	IR_Program initial_program = {nullptr, 0};
 
 	Instruction *initial_instructions = malloc(brainfuck_program_length * sizeof(Instruction));
 	if (initial_instructions == NULL) {
@@ -111,13 +111,13 @@ Program generate_initial_IR_program(const char *brainfuck_program, const size_t 
 	return initial_program;
 }
 
-Program generate_optimised_IR_program(const Program program) {
-	const Program coalesced_program = coalesce_instructions(program);
+IR_Program generate_optimised_IR_program(const IR_Program program) {
+	const IR_Program coalesced_program = coalesce_instructions(program);
 	if (coalesced_program.instructions == nullptr) {
 		return coalesced_program;
 	}
 
-	const Program resolved_program = resolve_program_jumps(coalesced_program);
+	const IR_Program resolved_program = resolve_program_jumps(coalesced_program);
 	if (resolved_program.instructions == nullptr) {
 		free(coalesced_program.instructions);
 		return resolved_program;
@@ -126,8 +126,8 @@ Program generate_optimised_IR_program(const Program program) {
 	return resolved_program;
 }
 
-Program coalesce_instructions(Program program) {
-	Program coalesced_program = {nullptr, 0};
+IR_Program coalesce_instructions(IR_Program program) {
+	IR_Program coalesced_program = {nullptr, 0};
 	Instruction *coalesced_instructions = malloc(program.program_length * sizeof(*coalesced_instructions));
 	if (coalesced_instructions == NULL) {
 		fprintf(stderr, "Error: Unable to initialise coalesced instruction array\n");
@@ -167,8 +167,8 @@ Program coalesce_instructions(Program program) {
 	return coalesced_program;
 }
 
-Program resolve_program_jumps(Program program) {
-	Program resolved_program = {nullptr, 0};
+IR_Program resolve_program_jumps(IR_Program program) {
+	IR_Program resolved_program = {nullptr, 0};
 
 	size_t loop_stack_position = 0;
 	size_t *loop_starting_points = malloc(program.program_length * sizeof(*loop_starting_points));
@@ -193,7 +193,7 @@ Program resolve_program_jumps(Program program) {
 			const size_t ending_index = i;
 
 			if (starting_index > UINT16_MAX || ending_index > UINT16_MAX) {
-				fprintf(stderr, "Error: Program too large for 16-bit jump arguments\n");
+				fprintf(stderr, "Error: IR_Program too large for 16-bit jump arguments\n");
 				free(loop_starting_points);
 				return resolved_program;
 			}
@@ -240,7 +240,7 @@ const char *opcode_to_string(const Opcode opcode) {
 			return "";
 	}
 }
-void dump_IR(const Program program, const char *filename) {
+void dump_IR(const IR_Program program, const char *filename) {
 	FILE *output_file = fopen(filename, "w");
 	if (output_file == NULL) {
 		fprintf(stderr, "Error: could not create output file\n");
