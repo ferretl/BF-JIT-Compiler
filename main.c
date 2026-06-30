@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "intermediate_representation.h"
+#include "jit.h"
+
+#define TAPE_SIZE 30000
 
 
 static char *get_input_file_prefix(const char *filename) {
@@ -26,9 +29,9 @@ static char *get_input_file_prefix(const char *filename) {
 static bool is_brainfuck_instruction(const int character) { return strchr("+-<>.,[]", character) != NULL; }
 
 int main(const int argc, char *argv[]) {
-
 	init_jit(argv[0]);
 
+	unsigned char tape[TAPE_SIZE] = {0};
 
 	bool dump_program = false;
 	const char *filename = nullptr;
@@ -85,8 +88,14 @@ int main(const int argc, char *argv[]) {
 
 
 	char *filename_prefix = dump_program ? get_input_file_prefix(filename) : nullptr;
-	transform_brainfuck_to_ir(brainfuck_program, brainfuck_program_length, filename_prefix, dump_program);
+	const IR_Program ir_program =
+			transform_brainfuck_to_ir(brainfuck_program, brainfuck_program_length, filename_prefix, dump_program);
+	const CompiledProgram fn = compile_jit(&ir_program);
+	fn(tape);
 
 	free(brainfuck_program);
+	free(ir_program.instructions);
+	finish_jit();
+	
 	return EXIT_SUCCESS;
 }
