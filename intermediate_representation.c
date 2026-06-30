@@ -42,23 +42,19 @@ size_t generate_initial_instructions(const char *brainfuck_program, const size_t
 		const char current_character = brainfuck_program[i];
 		switch (current_character) {
 			case '.':
-				initial_instructions[program_length].opcode = OP_PRINT;
-				initial_instructions[program_length].argument = 0;
+				initial_instructions[program_length] = (Instruction) {OP_PRINT, 0};
 				program_length++;
 				break;
 			case ',':
-				initial_instructions[program_length].opcode = OP_READ;
-				initial_instructions[program_length].argument = 0;
+				initial_instructions[program_length] = (Instruction) {OP_READ, 0};
 				program_length++;
 				break;
 			case '[':
-				initial_instructions[program_length].opcode = OP_JUMP_IF_ZERO;
-				initial_instructions[program_length].argument = 0; // will be resolved later
+				initial_instructions[program_length] = (Instruction) {OP_JUMP_IF_ZERO, 0};
 				program_length++;
 				break;
 			case ']':
-				initial_instructions[program_length].opcode = OP_JUMP_IF_NOT_ZERO;
-				initial_instructions[program_length].argument = 0; // will be resolved later
+				initial_instructions[program_length] = (Instruction) {OP_JUMP_IF_NOT_ZERO, 0};
 				program_length++;
 				break;
 			case '+':
@@ -69,8 +65,8 @@ size_t generate_initial_instructions(const char *brainfuck_program, const size_t
 					coalesce_count++;
 					i++;
 				}
-				initial_instructions[program_length].opcode = current_character == '+' ? OP_ADD : OP_SUB;
-				initial_instructions[program_length].argument = coalesce_count;
+				initial_instructions[program_length] =
+						(Instruction) {current_character == '+' ? OP_ADD : OP_SUB, coalesce_count};
 				program_length++;
 				break;
 			case '>':
@@ -81,8 +77,8 @@ size_t generate_initial_instructions(const char *brainfuck_program, const size_t
 					move_coalesce_count++;
 					i++;
 				}
-				initial_instructions[program_length].opcode = current_character == '>' ? OP_MOVE_RIGHT : OP_MOVE_LEFT;
-				initial_instructions[program_length].argument = move_coalesce_count;
+				initial_instructions[program_length] =
+						(Instruction) {current_character == '>' ? OP_MOVE_RIGHT : OP_MOVE_LEFT, move_coalesce_count};
 				program_length++;
 				break;
 			default:
