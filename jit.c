@@ -1,5 +1,5 @@
 #include "jit.h"
-#include <_stdlib.h>
+#include <stdlib.h>
 #include <lightning.h>
 #include "intermediate_representation.h"
 
