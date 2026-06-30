@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 4.2)
 project(BF_JIT C)
 
-if(APPLE)
+if (APPLE)
     list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew")
-endif()
+endif ()
 
 # Find GNU lightning
 find_path(LIGHTNING_INCLUDE_DIR lightning.h)
@@ -15,5 +15,6 @@ set(CMAKE_C_STANDARD 23)
 
 add_executable(BF_JIT main.c
         compile.h
-        compile.c)
+        compile.c
+)
 target_link_libraries(BF_JIT ${LIGHTNING_LIBRARY})
