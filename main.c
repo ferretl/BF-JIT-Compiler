@@ -1,7 +1,9 @@
 #include <_stdlib.h>
+#include <lightning.h>
 #include <stdio.h>
 #include <string.h>
-#include "compile.h"
+#include "intermediate_representation.h"
+
 
 static char *get_input_file_prefix(const char *filename) {
 	const size_t filename_length = strlen(filename);
@@ -24,6 +26,9 @@ static char *get_input_file_prefix(const char *filename) {
 static bool is_brainfuck_instruction(const int character) { return strchr("+-<>.,[]", character) != NULL; }
 
 int main(const int argc, char *argv[]) {
+
+	init_jit(argv[0]);
+
 
 	bool dump_program = false;
 	const char *filename = nullptr;
@@ -80,7 +85,7 @@ int main(const int argc, char *argv[]) {
 
 
 	char *filename_prefix = dump_program ? get_input_file_prefix(filename) : nullptr;
-	compile_bf_program(brainfuck_program, brainfuck_program_length, filename_prefix, dump_program);
+	transform_brainfuck_to_ir(brainfuck_program, brainfuck_program_length, filename_prefix, dump_program);
 
 	free(brainfuck_program);
 	return EXIT_SUCCESS;
