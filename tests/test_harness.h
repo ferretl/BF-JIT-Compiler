@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-static int test_ran = 0;
-static int test_failed = 0;
+static int tests_run = 0;
+static int tests_failed = 0;
 static int current_test_failed = false;
 
 #define CHECK(cond)                                                                                                    \

@@ -18,6 +18,19 @@ add_executable(BF_JIT main.c
         intermediate_representation.c
         jit.c
         jit.h
-        tests/test_harness.h
 )
 target_link_libraries(BF_JIT ${LIGHTNING_LIBRARY})
+
+enable_testing()
+
+add_executable(test_ir
+        tests/test_ir.c
+        intermediate_representation.c)
+target_include_directories(test_ir PRIVATE ${CMAKE_SOURCE_DIR})
+
+add_test(NAME ir_tests COMMAND test_ir)
+
+add_custom_target(check
+        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+        DEPENDS test_ir
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
