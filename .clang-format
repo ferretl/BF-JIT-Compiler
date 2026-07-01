@@ -1,6 +1,6 @@
 # Generated from CLion C/C++ Code Style settings
 ---
-Language: C
+Language: Cpp
 BasedOnStyle: clang-format
 AccessModifierOffset: -4
 AlignConsecutiveAssignments: false

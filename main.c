@@ -5,7 +5,7 @@
 #include "intermediate_representation.h"
 #include "jit.h"
 
-#define TAPE_SIZE 30000
+#define TAPE_SIZE 30'000
 
 
 static char *get_input_file_prefix(const char *filename) {
