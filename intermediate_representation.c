@@ -5,12 +5,12 @@
 IR_Program transform_brainfuck_to_ir(const char *brainfuck_program, const size_t brainfuck_program_length,
 									 char *output_prefix, const bool dump_program) {
 
-	IR_Program initial_IR_program = generate_initial_IR_program(brainfuck_program, brainfuck_program_length);
+	const IR_Program initial_IR_program = generate_initial_IR_program(brainfuck_program, brainfuck_program_length);
 	if (initial_IR_program.instructions == nullptr && brainfuck_program_length > 0) {
 		return initial_IR_program;
 	}
 
-	IR_Program optimised_ir_program = generate_optimised_IR_program(initial_IR_program);
+	const IR_Program optimised_ir_program = generate_optimised_IR_program(initial_IR_program);
 	if (optimised_ir_program.instructions == nullptr) {
 		free(initial_IR_program.instructions);
 		return optimised_ir_program;
@@ -122,7 +122,7 @@ IR_Program generate_optimised_IR_program(const IR_Program program) {
 	return resolved_program;
 }
 
-IR_Program coalesce_instructions(IR_Program program) {
+IR_Program coalesce_instructions(const IR_Program program) {
 	IR_Program coalesced_program = {nullptr, 0};
 	Instruction *coalesced_instructions = malloc(program.program_length * sizeof(*coalesced_instructions));
 	if (coalesced_instructions == NULL) {
@@ -146,8 +146,8 @@ IR_Program coalesce_instructions(IR_Program program) {
 
 		if (is_clear_cell_loop) {
 			coalesced_instructions[coalesced_program_length] = (Instruction) {
-					.opcode = OP_CLEAR_CELL,
-					.argument = 0,
+					OP_CLEAR_CELL,
+					0,
 			};
 			i += 2;
 		} else {
@@ -163,7 +163,7 @@ IR_Program coalesce_instructions(IR_Program program) {
 	return coalesced_program;
 }
 
-IR_Program resolve_program_jumps(IR_Program program) {
+IR_Program resolve_program_jumps(const IR_Program program) {
 	IR_Program resolved_program = {nullptr, 0};
 
 	size_t loop_stack_position = 0;

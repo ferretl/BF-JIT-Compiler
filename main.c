@@ -1,6 +1,6 @@
-#include <stdlib.h>
 #include <lightning.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "intermediate_representation.h"
 #include "jit.h"
@@ -10,7 +10,7 @@
 
 static char *get_input_file_prefix(const char *filename) {
 	const size_t filename_length = strlen(filename);
-	char *output = malloc(filename_length - 3); /* room for ".s" plus '\0' when appending */
+	char *output = malloc(filename_length - 3);
 	if (output == NULL) {
 		return nullptr;
 	}
@@ -90,12 +90,12 @@ int main(const int argc, char *argv[]) {
 	char *filename_prefix = dump_program ? get_input_file_prefix(filename) : nullptr;
 	const IR_Program ir_program =
 			transform_brainfuck_to_ir(brainfuck_program, brainfuck_program_length, filename_prefix, dump_program);
-	const CompiledProgram fn = compile_jit(&ir_program);
-	fn(tape);
+	const CompiledProgram bf_jit_program = compile_jit(&ir_program);
+	bf_jit_program(tape);
+	finish_jit();
 
 	free(brainfuck_program);
 	free(ir_program.instructions);
-	finish_jit();
 	
 	return EXIT_SUCCESS;
 }

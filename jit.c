@@ -1,6 +1,6 @@
 #include "jit.h"
-#include <stdlib.h>
 #include <lightning.h>
+#include <stdlib.h>
 #include "intermediate_representation.h"
 
 static jit_state_t *_jit;
@@ -10,7 +10,7 @@ CompiledProgram compile_jit(const IR_Program *program) {
 
 	jit_prolog();
 
-	/* Load tape into R0 */
+	/* Load tape into V0 */
 	jit_node_t *tape_arg = jit_arg();
 	jit_getarg(JIT_V0, tape_arg);
 
@@ -56,18 +56,16 @@ CompiledProgram compile_jit(const IR_Program *program) {
 			case OP_JUMP_IF_ZERO:
 				jit_ldr_uc(JIT_R1, JIT_V0);
 				jit_node_t *branch_forward = jit_beqi(JIT_R1, 0);
-				pending_jumps[pending_jump_count++] =
-						(PendingJump) {.branch = branch_forward, .target = instruction.argument};
+				pending_jumps[pending_jump_count++] = (PendingJump) {branch_forward, instruction.argument};
 				break;
 			case OP_JUMP_IF_NOT_ZERO:
 				jit_ldr_uc(JIT_R1, JIT_V0);
 				jit_node_t *branch_backwards = jit_bnei(JIT_R1, 0);
-				pending_jumps[pending_jump_count++] =
-						(PendingJump) {.branch = branch_backwards, .target = instruction.argument};
+				pending_jumps[pending_jump_count++] = (PendingJump) {branch_backwards, instruction.argument};
 				break;
 			case OP_CLEAR_CELL:
-				jit_movi(JIT_R1, 0);
-				jit_str_c(JIT_V0, JIT_R1);
+				jit_movi(JIT_R0, 0);
+				jit_str_c(JIT_V0, JIT_R0);
 				break;
 		}
 	}
