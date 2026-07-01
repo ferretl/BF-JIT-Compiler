@@ -18,5 +18,6 @@ add_executable(BF_JIT main.c
         intermediate_representation.c
         jit.c
         jit.h
+        tests/test_harness.h
 )
 target_link_libraries(BF_JIT ${LIGHTNING_LIBRARY})
