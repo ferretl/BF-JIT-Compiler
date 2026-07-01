@@ -15,13 +15,13 @@ CompiledProgram compile_jit(const IR_Program *program) {
   jit_getarg(JIT_V0, tape_arg);
 
   /* generate label array for branching */
-  jit_node_t **labels			  = calloc(program->program_length, sizeof(jit_node_t *));
-  PendingJump *pending_jumps	  = calloc(program->program_length, sizeof(PendingJump));
-  size_t	   pending_jump_count = 0;
+  jit_node_t **labels = calloc(program->program_length, sizeof(jit_node_t *));
+  PendingJump *pending_jumps = calloc(program->program_length, sizeof(PendingJump));
+  size_t pending_jump_count = 0;
 
   for (size_t i = 0; i < program->program_length; i++) {
 
-	labels[i]					  = jit_label();
+	labels[i] = jit_label();
 	const Instruction instruction = program->instructions[i];
 
 	switch (instruction.opcode) {
@@ -55,12 +55,12 @@ CompiledProgram compile_jit(const IR_Program *program) {
 		break;
 	  case OP_JUMP_IF_ZERO:
 		jit_ldr_uc(JIT_R1, JIT_V0);
-		jit_node_t *branch_forward			= jit_beqi(JIT_R1, 0);
+		jit_node_t *branch_forward = jit_beqi(JIT_R1, 0);
 		pending_jumps[pending_jump_count++] = (PendingJump) {branch_forward, instruction.argument};
 		break;
 	  case OP_JUMP_IF_NOT_ZERO:
 		jit_ldr_uc(JIT_R1, JIT_V0);
-		jit_node_t *branch_backwards		= jit_bnei(JIT_R1, 0);
+		jit_node_t *branch_backwards = jit_bnei(JIT_R1, 0);
 		pending_jumps[pending_jump_count++] = (PendingJump) {branch_backwards, instruction.argument};
 		break;
 	  case OP_CLEAR_CELL:

@@ -1,10 +1,10 @@
 # Generated from CLion C/C++ Code Style settings
 ---
 Language: C
-BasedOnStyle: LLVM
+BasedOnStyle: clang-format
 AccessModifierOffset: -4
-AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: true
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
 AlignOperands: true
 AlignTrailingComments: false
 AlwaysBreakTemplateDeclarations: Yes

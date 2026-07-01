@@ -10,19 +10,17 @@
 
 static char *get_input_file_prefix(const char *filename) {
   const size_t filename_length = strlen(filename);
-  char		  *output		   = malloc(filename_length - 3);
-  if (output == NULL) {
+  char *output = malloc(filename_length - 3);
+  if (output == NULL)
 	return nullptr;
-  }
   strcpy(output, filename);
 
   const char *slash = strrchr(output, '/');
-  char		 *dot	= strrchr(output, '.');
-  if (dot != NULL && (slash == NULL || dot > slash)) {
+  char *dot = strrchr(output, '.');
+  if (dot != NULL && (slash == NULL || dot > slash))
 	strcpy(dot, ""); /* replace the extension */
-  } else {
+  else
 	strcat(output, ""); /* no extension: append */
-  }
   return output;
 }
 
@@ -33,15 +31,13 @@ int main(const int argc, char *argv[]) {
 
   unsigned char tape[TAPE_SIZE] = {0};
 
-  bool		  dump_program = false;
-  const char *filename	   = nullptr;
-  for (int i = 1; i < argc; i++) {
-	if (strcmp(argv[i], "-d") == 0) {
+  bool dump_program = false;
+  const char *filename = nullptr;
+  for (int i = 1; i < argc; i++)
+	if (strcmp(argv[i], "-d") == 0)
 	  dump_program = true;
-	} else {
+	else
 	  filename = argv[i];
-	}
-  }
 
   if (filename == NULL) {
 	fprintf(stderr, "Error: missing file path argument.\n");
@@ -55,9 +51,9 @@ int main(const int argc, char *argv[]) {
 	return EXIT_FAILURE;
   }
 
-  size_t brainfuck_program_cap	  = 1024;
+  size_t brainfuck_program_cap = 1024;
   size_t brainfuck_program_length = 0;
-  char	*brainfuck_program		  = malloc(brainfuck_program_cap);
+  char *brainfuck_program = malloc(brainfuck_program_cap);
   if (brainfuck_program == NULL) {
 	fprintf(stderr, "Error: Allocation for program space failed.\n");
 	fclose(input_file);
@@ -66,9 +62,8 @@ int main(const int argc, char *argv[]) {
 
   int character;
   while ((character = fgetc(input_file)) != EOF) {
-	if (!is_brainfuck_instruction(character)) {
+	if (!is_brainfuck_instruction(character))
 	  continue;
-	}
 	if (brainfuck_program_length + 1 >= brainfuck_program_cap) {
 	  brainfuck_program_cap *= 2;
 	  char *grown = realloc(brainfuck_program, brainfuck_program_cap);
@@ -87,7 +82,7 @@ int main(const int argc, char *argv[]) {
   fclose(input_file);
 
 
-  char			  *filename_prefix = dump_program ? get_input_file_prefix(filename) : nullptr;
+  char *filename_prefix = dump_program ? get_input_file_prefix(filename) : nullptr;
   const IR_Program ir_program =
 		  transform_brainfuck_to_ir(brainfuck_program, brainfuck_program_length, filename_prefix, dump_program);
   const CompiledProgram bf_jit_program = compile_jit(&ir_program);

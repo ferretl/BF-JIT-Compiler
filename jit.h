@@ -6,7 +6,7 @@
 
 typedef struct {
   jit_node_t *branch;
-  size_t	  target;
+  size_t target;
 } PendingJump;
 
 typedef void (*CompiledProgram)(unsigned char *tape);

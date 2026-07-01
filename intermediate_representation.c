@@ -6,9 +6,8 @@ IR_Program transform_brainfuck_to_ir(const char *brainfuck_program, const size_t
 									 char *output_prefix, const bool dump_program) {
 
   const IR_Program initial_IR_program = generate_initial_IR_program(brainfuck_program, brainfuck_program_length);
-  if (initial_IR_program.instructions == nullptr && brainfuck_program_length > 0) {
+  if (initial_IR_program.instructions == nullptr && brainfuck_program_length > 0)
 	return initial_IR_program;
-  }
 
   const IR_Program optimised_ir_program = generate_optimised_IR_program(initial_IR_program);
   if (optimised_ir_program.instructions == nullptr) {
@@ -18,7 +17,7 @@ IR_Program transform_brainfuck_to_ir(const char *brainfuck_program, const size_t
 
   if (dump_program) {
 	const size_t dump_filename_length = strlen(output_prefix) + strlen("_dump.txt") + 1;
-	char		*dump_filename		  = malloc(dump_filename_length);
+	char *dump_filename = malloc(dump_filename_length);
 	if (dump_filename == NULL) {
 	  fprintf(stderr, "Error: Unable to allocate dump filename\n");
 	  free(initial_IR_program.instructions);
@@ -101,7 +100,7 @@ IR_Program generate_initial_IR_program(const char *brainfuck_program, const size
   const size_t program_length =
 		  generate_initial_instructions(brainfuck_program, brainfuck_program_length, initial_instructions);
 
-  initial_program.instructions	 = initial_instructions;
+  initial_program.instructions = initial_instructions;
   initial_program.program_length = program_length;
 
   return initial_program;
@@ -109,9 +108,8 @@ IR_Program generate_initial_IR_program(const char *brainfuck_program, const size
 
 IR_Program generate_optimised_IR_program(const IR_Program program) {
   const IR_Program coalesced_program = coalesce_instructions(program);
-  if (coalesced_program.instructions == nullptr) {
+  if (coalesced_program.instructions == nullptr)
 	return coalesced_program;
-  }
 
   const IR_Program resolved_program = resolve_program_jumps(coalesced_program);
   if (resolved_program.instructions == nullptr) {
@@ -123,7 +121,7 @@ IR_Program generate_optimised_IR_program(const IR_Program program) {
 }
 
 IR_Program coalesce_instructions(const IR_Program program) {
-  IR_Program   coalesced_program	  = {nullptr, 0};
+  IR_Program coalesced_program = {nullptr, 0};
   Instruction *coalesced_instructions = malloc(program.program_length * sizeof(*coalesced_instructions));
   if (coalesced_instructions == NULL) {
 	fprintf(stderr, "Error: Unable to initialise coalesced instruction array\n");
@@ -135,9 +133,9 @@ IR_Program coalesce_instructions(const IR_Program program) {
 	bool is_clear_cell_loop = false;
 
 	if (i + 2 < program.program_length) {
-	  const Instruction first_instruction  = program.instructions[i];
+	  const Instruction first_instruction = program.instructions[i];
 	  const Instruction second_instruction = program.instructions[i + 1];
-	  const Instruction third_instruction  = program.instructions[i + 2];
+	  const Instruction third_instruction = program.instructions[i + 2];
 
 	  is_clear_cell_loop = first_instruction.opcode == OP_JUMP_IF_ZERO &&
 						   (second_instruction.opcode == OP_ADD || second_instruction.opcode == OP_SUB) &&
@@ -157,7 +155,7 @@ IR_Program coalesce_instructions(const IR_Program program) {
 	coalesced_program_length++;
   }
 
-  coalesced_program.instructions   = coalesced_instructions;
+  coalesced_program.instructions = coalesced_instructions;
   coalesced_program.program_length = coalesced_program_length;
 
   return coalesced_program;
@@ -166,7 +164,7 @@ IR_Program coalesce_instructions(const IR_Program program) {
 IR_Program resolve_program_jumps(const IR_Program program) {
   IR_Program resolved_program = {nullptr, 0};
 
-  size_t  loop_stack_position  = 0;
+  size_t loop_stack_position = 0;
   size_t *loop_starting_points = malloc(program.program_length * sizeof(*loop_starting_points));
   if (loop_starting_points == NULL) {
 	fprintf(stderr, "Error: Unable to allocate space for resolved program\n");
@@ -186,7 +184,7 @@ IR_Program resolve_program_jumps(const IR_Program program) {
 	  }
 
 	  const size_t starting_index = loop_starting_points[--loop_stack_position];
-	  const size_t ending_index	  = i;
+	  const size_t ending_index = i;
 
 	  if (starting_index > UINT16_MAX || ending_index > UINT16_MAX) {
 		fprintf(stderr, "Error: IR_Program too large for 16-bit jump arguments\n");
@@ -195,7 +193,7 @@ IR_Program resolve_program_jumps(const IR_Program program) {
 	  }
 
 	  program.instructions[starting_index].argument = (uint16_t) ending_index;
-	  program.instructions[ending_index].argument	= (uint16_t) starting_index;
+	  program.instructions[ending_index].argument = (uint16_t) starting_index;
 	}
   }
 
@@ -205,7 +203,7 @@ IR_Program resolve_program_jumps(const IR_Program program) {
 	return resolved_program;
   }
 
-  resolved_program.instructions	  = program.instructions;
+  resolved_program.instructions = program.instructions;
   resolved_program.program_length = program.program_length;
 
   free(loop_starting_points);

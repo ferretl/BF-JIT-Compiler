@@ -16,24 +16,24 @@ typedef enum {
 } Opcode;
 
 typedef struct {
-  Opcode   opcode;
+  Opcode opcode;
   uint16_t argument;
 } Instruction;
 
 typedef struct {
   Instruction *instructions;
-  size_t	   program_length;
+  size_t program_length;
 } IR_Program;
 
-IR_Program	transform_brainfuck_to_ir(const char *brainfuck_program, size_t brainfuck_program_length,
-									  char *output_prefix, bool dump_program);
-size_t		generate_initial_instructions(const char *brainfuck_program, size_t brainfuck_program_length,
-										  Instruction *initial_instructions);
-IR_Program	generate_initial_IR_program(const char *brainfuck_program, size_t brainfuck_program_length);
-IR_Program	generate_optimised_IR_program(IR_Program program);
-IR_Program	coalesce_instructions(IR_Program program);
-IR_Program	resolve_program_jumps(IR_Program program);
+IR_Program transform_brainfuck_to_ir(const char *brainfuck_program, size_t brainfuck_program_length,
+									 char *output_prefix, bool dump_program);
+size_t generate_initial_instructions(const char *brainfuck_program, size_t brainfuck_program_length,
+									 Instruction *initial_instructions);
+IR_Program generate_initial_IR_program(const char *brainfuck_program, size_t brainfuck_program_length);
+IR_Program generate_optimised_IR_program(IR_Program program);
+IR_Program coalesce_instructions(IR_Program program);
+IR_Program resolve_program_jumps(IR_Program program);
 const char *opcode_to_string(Opcode opcode);
-void		dump_IR(IR_Program program, const char *filename);
+void dump_IR(IR_Program program, const char *filename);
 
 #endif // BF_JIT_COMPILE_H
